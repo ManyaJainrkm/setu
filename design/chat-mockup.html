@@ -1,0 +1,1283 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Setu — Chat Interface Mockup</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Merriweather:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+    /* ===== RESET & BASE ===== */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      /* Brand colors — pastel & creamy palette */
+      --blush: #E8B4A8;
+      --blush-dark: #C47A6A;
+      --blush-light: #FDF0EC;
+      --butter: #F0D99E;
+      --butter-dark: #D4B060;
+      --butter-light: #FDF6E0;
+      --mint: #BDDAC4;
+      --mint-dark: #8DB89A;
+      --mint-light: #F0F8F2;
+      --cream: #FFF8F0;
+      --warm-white: #FFFAF5;
+      --light-stone: #E2DAD2;
+      --medium-stone: #9C928A;
+      --dark-stone: #2D2A27;
+      --slate: #4A4A4A;
+
+      /* Persona accents */
+      --elena: #C4956A;
+      --maya: #5A9E8F;
+      --kwame: #5B6782;
+      --samir: #6DAF80;
+      --ayanna: #D4897B;
+      --fatima: #8B6F8E;
+      --jordan: #E8B040;
+
+      /* Functional */
+      --crisis-bg: #FFF0ED;
+      --crisis-border: #C47A6A;
+      --crisis-text: #6B3A32;
+      --success: #8DB89A;
+
+      /* Typography */
+      --font-heading: 'Merriweather', Georgia, 'Times New Roman', serif;
+      --font-body: 'Inter', 'Segoe UI', 'Helvetica Neue', sans-serif;
+
+      /* Spacing */
+      --xs: 4px;
+      --sm: 8px;
+      --md: 16px;
+      --lg: 24px;
+      --xl: 32px;
+      --xxl: 48px;
+
+      /* Radius */
+      --radius-sm: 8px;
+      --radius-md: 12px;
+      --radius-lg: 16px;
+      --radius-full: 50%;
+
+      /* Shadows */
+      --shadow-sm: 0 1px 4px rgba(45, 42, 39, 0.06);
+      --shadow-md: 0 2px 16px rgba(45, 42, 39, 0.08);
+      --shadow-lg: 0 4px 24px rgba(45, 42, 39, 0.12);
+
+      /* Transitions */
+      --ease: 200ms ease-out;
+    }
+
+    html { font-size: 16px; scroll-behavior: smooth; }
+
+    body {
+      font-family: var(--font-body);
+      color: var(--slate);
+      background: var(--warm-white);
+      line-height: 1.6;
+      min-height: 100vh;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* ===== UTILITY ===== */
+    .sr-only {
+      position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px;
+      overflow: hidden; clip: rect(0,0,0,0); border: 0;
+    }
+
+    /* ===== LAYOUT ===== */
+    .app-layout {
+      display: flex;
+      min-height: 100vh;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    /* ===== SIDEBAR ===== */
+    .sidebar {
+      width: 280px;
+      min-width: 280px;
+      background: #FFFFFF;
+      border-right: 1px solid var(--light-stone);
+      padding: var(--lg);
+      display: flex;
+      flex-direction: column;
+      overflow-y: auto;
+      height: 100vh;
+      position: sticky;
+      top: 0;
+    }
+
+    .sidebar-header {
+      display: flex;
+      align-items: center;
+      gap: var(--sm);
+      margin-bottom: var(--lg);
+      padding-bottom: var(--md);
+      border-bottom: 1px solid var(--light-stone);
+    }
+
+    .logo-icon {
+      width: 36px;
+      height: 36px;
+      background: var(--blush);
+      border-radius: var(--radius-sm);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-family: var(--font-heading);
+      font-weight: 700;
+      font-size: 16px;
+      flex-shrink: 0;
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* Bridge arch SVG icon inside the logo */
+    .logo-icon svg {
+      width: 24px;
+      height: 24px;
+      fill: none;
+      stroke: white;
+      stroke-width: 2.5;
+      stroke-linecap: round;
+    }
+
+    .logo-text-wrapper {
+      display: flex;
+      flex-direction: column;
+      line-height: 1.2;
+    }
+
+    .logo-text {
+      font-family: var(--font-heading);
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--dark-stone);
+      letter-spacing: 0.02em;
+    }
+
+    .logo-tagline {
+      font-size: 10px;
+      font-weight: 400;
+      color: var(--medium-stone);
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+    }
+
+    .sidebar-label {
+      font-size: 12px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--medium-stone);
+      margin-bottom: var(--sm);
+      margin-top: var(--sm);
+    }
+
+    .persona-list {
+      display: flex;
+      flex-direction: column;
+      gap: var(--sm);
+      flex: 1;
+    }
+
+    /* ===== PERSONA CARD (sidebar) ===== */
+    .persona-card {
+      display: flex;
+      align-items: center;
+      gap: var(--md);
+      padding: var(--sm) var(--md);
+      border-radius: var(--radius-md);
+      cursor: pointer;
+      transition: all var(--ease);
+      border: 2px solid transparent;
+      background: transparent;
+      text-align: left;
+      width: 100%;
+      font-family: var(--font-body);
+    }
+
+    .persona-card:hover {
+      background: var(--blush-light);
+      transform: translateX(2px);
+    }
+
+    .persona-card.active {
+      border-color: var(--blush);
+      background: var(--blush-light);
+    }
+
+    .persona-avatar {
+      width: 44px;
+      height: 44px;
+      border-radius: var(--radius-full);
+      object-fit: cover;
+      border: 2px solid var(--light-stone);
+      flex-shrink: 0;
+      transition: border-color var(--ease);
+    }
+
+    .persona-card.active .persona-avatar,
+    .persona-card:hover .persona-avatar {
+      border-color: var(--blush);
+    }
+
+    .persona-info {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .persona-name {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--dark-stone);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .persona-specialty {
+      font-size: 12px;
+      color: var(--medium-stone);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .persona-badge {
+      display: inline-block;
+      font-size: 10px;
+      font-weight: 600;
+      padding: 1px 6px;
+      border-radius: 10px;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      flex-shrink: 0;
+    }
+
+    /* Badge colors per persona */
+    .badge-elena { background: rgba(196, 149, 106, 0.15); color: #8B6A45; }
+    .badge-maya { background: rgba(90, 158, 143, 0.15); color: #3D7064; }
+    .badge-kwame { background: rgba(91, 103, 130, 0.15); color: #3D4560; }
+    .badge-samir { background: rgba(109, 175, 128, 0.15); color: #3D6A50; }
+    .badge-ayanna { background: rgba(212, 137, 123, 0.15); color: #A06050; }
+    .badge-fatima { background: rgba(139, 111, 142, 0.15); color: #5D4A60; }
+    .badge-jordan { background: rgba(232, 176, 64, 0.15); color: #9A7030; }
+
+    .sidebar-status {
+      margin-top: auto;
+      padding-top: var(--md);
+      border-top: 1px solid var(--light-stone);
+      font-size: 12px;
+      color: var(--medium-stone);
+      display: flex;
+      align-items: center;
+      gap: var(--sm);
+    }
+
+    .status-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: var(--radius-full);
+      background: var(--success);
+      display: inline-block;
+    }
+
+    /* ===== MAIN CHAT AREA ===== */
+    .main-content {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+      max-width: 720px;
+      margin: 0 auto;
+      width: 100%;
+    }
+
+    /* ===== CHAT HEADER ===== */
+    .chat-header {
+      padding: var(--md) var(--lg);
+      border-bottom: 1px solid var(--light-stone);
+      background: #FFFFFF;
+      display: flex;
+      align-items: center;
+      gap: var(--md);
+      flex-shrink: 0;
+    }
+
+    .chat-header-avatar {
+      width: 48px;
+      height: 48px;
+      border-radius: var(--radius-full);
+      object-fit: cover;
+      border: 2px solid var(--blush);
+      flex-shrink: 0;
+    }
+
+    .chat-header-info {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .chat-header-name {
+      font-size: 16px;
+      font-weight: 600;
+      color: var(--dark-stone);
+    }
+
+    .chat-header-status {
+      font-size: 13px;
+      color: var(--medium-stone);
+    }
+
+    .chat-header-actions {
+      display: flex;
+      gap: var(--sm);
+    }
+
+    .header-btn {
+      width: 36px;
+      height: 36px;
+      border-radius: var(--radius-full);
+      border: 1px solid var(--light-stone);
+      background: white;
+      color: var(--medium-stone);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all var(--ease);
+      font-size: 16px;
+    }
+
+    .header-btn:hover {
+      background: var(--light-stone);
+      color: var(--dark-stone);
+    }
+
+    /* ===== MESSAGES AREA ===== */
+    .messages-area {
+      flex: 1;
+      overflow-y: auto;
+      padding: var(--lg);
+      display: flex;
+      flex-direction: column;
+      gap: var(--md);
+      background: var(--warm-white);
+    }
+
+    /* Scrollbar styling */
+    .messages-area::-webkit-scrollbar {
+      width: 6px;
+    }
+    .messages-area::-webkit-scrollbar-track {
+      background: transparent;
+    }
+    .messages-area::-webkit-scrollbar-thumb {
+      background: var(--light-stone);
+      border-radius: 3px;
+    }
+
+    /* ===== SYSTEM MESSAGE ===== */
+    .system-message {
+      text-align: center;
+      font-size: 13px;
+      color: var(--medium-stone);
+      font-style: italic;
+      max-width: 480px;
+      margin: 0 auto;
+      padding: var(--sm) var(--md);
+      background: var(--warm-white);
+      border-radius: var(--radius-md);
+    }
+
+    /* ===== CRISIS BANNER ===== */
+    .crisis-banner {
+      background: var(--crisis-bg);
+      border-left: 4px solid var(--crisis-border);
+      color: var(--crisis-text);
+      padding: var(--md);
+      border-radius: var(--radius-md);
+      font-size: 14px;
+      display: flex;
+      align-items: flex-start;
+      gap: var(--sm);
+      margin-bottom: var(--sm);
+    }
+
+    .crisis-banner-icon {
+      font-size: 18px;
+      flex-shrink: 0;
+      line-height: 1.4;
+    }
+
+    .crisis-banner strong {
+      font-weight: 600;
+    }
+
+    .crisis-banner a {
+      color: var(--crisis-border);
+      font-weight: 600;
+      text-decoration: underline;
+    }
+
+    /* ===== CHAT BUBBLES ===== */
+    .message {
+      display: flex;
+      gap: var(--sm);
+      max-width: 85%;
+      animation: messageIn 300ms ease-out;
+    }
+
+    @keyframes messageIn {
+      from { opacity: 0; transform: translateY(8px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .message.user {
+      align-self: flex-end;
+      flex-direction: row-reverse;
+    }
+
+    .message.persona {
+      align-self: flex-start;
+    }
+
+    .message-avatar {
+      width: 32px;
+      height: 32px;
+      border-radius: var(--radius-full);
+      object-fit: cover;
+      flex-shrink: 0;
+      margin-top: 4px;
+    }
+
+    .message-bubble {
+      padding: var(--md);
+      border-radius: var(--radius-md);
+      font-size: 15px;
+      line-height: 1.6;
+      position: relative;
+    }
+
+    .message.persona .message-bubble {
+      background: #FFFFFF;
+      color: var(--slate);
+      border-left: 4px solid var(--blush);
+      box-shadow: var(--shadow-sm);
+    }
+
+    .message.user .message-bubble {
+      background: var(--light-stone);
+      color: var(--dark-stone);
+    }
+
+    .message-time {
+      font-size: 11px;
+      color: var(--medium-stone);
+      margin-top: 4px;
+      display: block;
+    }
+
+    .message.user .message-time {
+      text-align: right;
+    }
+
+    /* ===== TYPING INDICATOR ===== */
+    .typing-indicator {
+      display: flex;
+      align-items: center;
+      gap: var(--sm);
+      padding: var(--sm) 0;
+      animation: messageIn 300ms ease-out;
+    }
+
+    .typing-avatar {
+      width: 32px;
+      height: 32px;
+      border-radius: var(--radius-full);
+      object-fit: cover;
+    }
+
+    .typing-dots {
+      display: flex;
+      gap: 4px;
+      padding: var(--md);
+      background: #FFFFFF;
+      border-radius: var(--radius-md);
+      border-left: 4px solid var(--blush);
+      box-shadow: var(--shadow-sm);
+    }
+
+    .typing-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: var(--radius-full);
+      background: var(--medium-stone);
+      animation: typingBounce 1.4s ease-in-out infinite;
+    }
+
+    .typing-dot:nth-child(2) { animation-delay: 0.2s; }
+    .typing-dot:nth-child(3) { animation-delay: 0.4s; }
+
+    @keyframes typingBounce {
+      0%, 60%, 100% { transform: translateY(0); opacity: 0.4; }
+      30% { transform: translateY(-6px); opacity: 1; }
+    }
+
+    /* ===== INPUT AREA ===== */
+    .input-area {
+      padding: var(--md) var(--lg);
+      background: #FFFFFF;
+      border-top: 1px solid var(--light-stone);
+      flex-shrink: 0;
+    }
+
+    .input-container {
+      display: flex;
+      align-items: flex-end;
+      gap: var(--sm);
+      background: var(--warm-white);
+      border: 1px solid var(--light-stone);
+      border-radius: var(--radius-lg);
+      padding: var(--sm) var(--sm) var(--sm) var(--md);
+      transition: border-color var(--ease);
+    }
+
+    .input-container:focus-within {
+      border-color: var(--blush);
+      box-shadow: 0 0 0 3px rgba(90, 125, 107, 0.1);
+    }
+
+    .input-textarea {
+      flex: 1;
+      border: none;
+      background: transparent;
+      font-family: var(--font-body);
+      font-size: 15px;
+      color: var(--dark-stone);
+      resize: none;
+      outline: none;
+      line-height: 1.5;
+      max-height: 120px;
+      padding: 4px 0;
+    }
+
+    .input-textarea::placeholder {
+      color: var(--medium-stone);
+    }
+
+    .input-actions {
+      display: flex;
+      gap: 2px;
+      align-items: center;
+    }
+
+    .input-btn {
+      width: 36px;
+      height: 36px;
+      border: none;
+      background: transparent;
+      color: var(--medium-stone);
+      border-radius: var(--radius-full);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all var(--ease);
+      font-size: 18px;
+    }
+
+    .input-btn:hover {
+      background: var(--light-stone);
+      color: var(--dark-stone);
+    }
+
+    .input-btn.send {
+      background: var(--blush);
+      color: white;
+    }
+
+    .input-btn.send:hover {
+      background: var(--blush-dark);
+    }
+
+    /* ===== ONBOARDING / WELCOME ===== */
+    .welcome-container {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: var(--xxl) var(--lg);
+      text-align: center;
+      gap: var(--lg);
+    }
+
+    .welcome-icon {
+      width: 80px;
+      height: 80px;
+      background: var(--blush-light);
+      border-radius: var(--radius-lg);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 36px;
+    }
+
+    .welcome-title {
+      font-family: var(--font-heading);
+      font-size: 28px;
+      font-weight: 700;
+      color: var(--dark-stone);
+    }
+
+    .welcome-subtitle {
+      font-size: 16px;
+      color: var(--medium-stone);
+      max-width: 420px;
+      line-height: 1.7;
+    }
+
+    .welcome-prompt {
+      font-size: 14px;
+      color: var(--medium-stone);
+      font-style: italic;
+      margin-top: var(--sm);
+    }
+
+    /* ===== PERSONA CARDS (onboarding) ===== */
+    .persona-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: var(--md);
+      width: 100%;
+      max-width: 900px;
+      margin: 0 auto;
+    }
+
+    .persona-card-large {
+      background: #FFFFFF;
+      border-radius: var(--radius-lg);
+      padding: var(--lg);
+      box-shadow: var(--shadow-sm);
+      border: 2px solid transparent;
+      cursor: pointer;
+      transition: all var(--ease);
+      display: flex;
+      flex-direction: column;
+      gap: var(--sm);
+    }
+
+    .persona-card-large:hover {
+      border-color: var(--blush);
+      box-shadow: var(--shadow-md);
+      transform: translateY(-2px);
+    }
+
+    .persona-card-large .card-top {
+      display: flex;
+      align-items: flex-start;
+      gap: var(--md);
+    }
+
+    .persona-card-large .card-avatar {
+      width: 64px;
+      height: 64px;
+      border-radius: var(--radius-full);
+      object-fit: cover;
+      border: 3px solid var(--light-stone);
+      flex-shrink: 0;
+    }
+
+    .persona-card-large:hover .card-avatar {
+      border-color: var(--blush);
+    }
+
+    .persona-card-large .card-name {
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--dark-stone);
+    }
+
+    .persona-card-large .card-tags {
+      display: flex;
+      gap: var(--xs);
+      flex-wrap: wrap;
+      margin-top: 2px;
+    }
+
+    .persona-card-large .card-tag {
+      font-size: 11px;
+      font-weight: 600;
+      padding: 2px 8px;
+      border-radius: 10px;
+      text-transform: uppercase;
+      letter-spacing: 0.03em;
+    }
+
+    .persona-card-large .card-quote {
+      font-style: italic;
+      font-size: 14px;
+      color: var(--medium-stone);
+      padding-left: var(--md);
+      border-left: 3px solid var(--light-stone);
+      margin-top: var(--xs);
+    }
+
+    .persona-card-large .card-orientation {
+      font-size: 12px;
+      color: var(--medium-stone);
+    }
+
+    .persona-card-large .card-btn {
+      margin-top: var(--sm);
+      padding: var(--sm) var(--md);
+      background: var(--blush);
+      color: white;
+      border: none;
+      border-radius: var(--radius-sm);
+      font-family: var(--font-body);
+      font-size: 14px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: background var(--ease);
+      align-self: flex-start;
+    }
+
+    .persona-card-large .card-btn:hover {
+      background: var(--blush-dark);
+    }
+
+    /* ===== SECTION HEADER (onboarding) ===== */
+    .onboarding-section {
+      padding: var(--xxl) var(--lg);
+      max-width: 1000px;
+      margin: 0 auto;
+    }
+
+    .onboarding-header {
+      text-align: center;
+      margin-bottom: var(--xl);
+    }
+
+    .onboarding-header h1 {
+      font-family: var(--font-heading);
+      font-size: 32px;
+      font-weight: 700;
+      color: var(--dark-stone);
+      margin-bottom: var(--sm);
+    }
+
+    .onboarding-header p {
+      color: var(--medium-stone);
+      font-size: 16px;
+      max-width: 500px;
+      margin: 0 auto;
+    }
+
+    .onboarding-nav {
+      display: flex;
+      gap: var(--sm);
+      justify-content: center;
+      margin-bottom: var(--xl);
+    }
+
+    .onboarding-nav-btn {
+      padding: var(--sm) var(--lg);
+      border: 1px solid var(--light-stone);
+      background: white;
+      border-radius: 20px;
+      font-family: var(--font-body);
+      font-size: 14px;
+      color: var(--slate);
+      cursor: pointer;
+      transition: all var(--ease);
+    }
+
+    .onboarding-nav-btn:hover,
+    .onboarding-nav-btn.active {
+      border-color: var(--blush);
+      background: var(--blush-light);
+      color: var(--blush-dark);
+    }
+
+    .onboarding-nav-btn.active {
+      font-weight: 600;
+    }
+
+    /* ===== RESPONSIVE ===== */
+    @media (max-width: 900px) {
+      .sidebar {
+        display: none;
+      }
+      .main-content {
+        max-width: 100%;
+      }
+      .persona-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (min-width: 901px) {
+      .mobile-sidebar-toggle {
+        display: none;
+      }
+      .persona-grid.compact {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    @media (max-width: 640px) {
+      .onboarding-section {
+        padding: var(--lg) var(--md);
+      }
+      .onboarding-header h1 {
+        font-size: 24px;
+      }
+      .messages-area {
+        padding: var(--md);
+      }
+      .chat-header {
+        padding: var(--sm) var(--md);
+      }
+      .input-area {
+        padding: var(--sm) var(--md);
+      }
+      .message {
+        max-width: 92%;
+      }
+      .persona-card-large {
+        padding: var(--md);
+      }
+    }
+
+    /* ===== DARK MODE ===== */
+            @media (prefers-color-scheme: dark) {
+              :root {
+                --cream: #1A1816;
+                --warm-white: #1A1816;
+                --slate: #E2DAD2;
+                --dark-stone: #FFFAF5;
+                --light-stone: #4A4744;
+                --medium-stone: #9C928A;
+                --blush-light: #2A2724;
+              }
+
+              body { background: #1A1816; }
+
+              .sidebar,
+              .chat-header,
+              .input-area {
+                background: #2A2724;
+              }
+
+              .sidebar { border-color: #3A3734; }
+
+              .message.persona .message-bubble {
+                background: #2A2724;
+                color: #E2DAD2;
+              }
+
+              .message.user .message-bubble {
+                background: #3A3734;
+                color: #FFFAF5;
+              }
+
+              .input-container {
+                background: #1A1816;
+                border-color: #4A4744;
+              }
+
+              .input-textarea { color: #FFFAF5; }
+
+              .persona-card-large,
+              .crisis-banner {
+                background: #2A2724;
+              }
+
+              .welcome-icon { background: #2A2724; }
+
+              .sidebar-header { border-color: #3A3734; }
+
+              .typing-dots { background: #2A2724; }
+
+              .onboarding-nav-btn {
+                background: #2A2724;
+                border-color: #4A4744;
+                color: #E2DAD2;
+              }
+
+              .system-message {
+                background: #1A1816;
+              }
+            }
+
+    /* ===== REDUCED MOTION ===== */
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ===== APP LAYOUT ===== -->
+  <div class="app-layout">
+
+    <!-- ===== SIDEBAR (desktop) ===== -->
+    <aside class="sidebar" role="navigation" aria-label="Therapist selection">
+      <div class="sidebar-header">
+        <div class="logo-icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <!-- Bridge arch -->
+            <path d="M2 20 Q4 4 12 4 Q20 4 22 20" />
+            <!-- Bridge pillars -->
+            <line x1="4" y1="20" x2="4" y2="16" />
+            <line x1="20" y1="20" x2="20" y2="16" />
+            <!-- Reflection/support line -->
+            <line x1="8" y1="13" x2="16" y2="13" stroke-width="1.5" stroke-dasharray="2 2" />
+          </svg>
+        </div>
+        <div class="logo-text-wrapper">
+          <span class="logo-text">Setu</span>
+          <span class="logo-tagline">Bridge to Better</span>
+        </div>
+      </div>
+
+      <span class="sidebar-label">Your Therapists</span>
+      <div class="persona-list" role="tablist" aria-label="Select a therapist">
+
+        <!-- Dr. Elena Vasquez -->
+        <button class="persona-card active" role="tab" aria-selected="true" data-persona="elena">
+          <img src="personas/dr-elena-vasquez.png" alt="Dr. Elena Vasquez" class="persona-avatar" style="border-color: var(--elena);" loading="lazy">
+          <div class="persona-info">
+            <div class="persona-name">Dr. Elena Vasquez</div>
+            <div class="persona-specialty">CBT · Anxiety Specialist</div>
+          </div>
+          <span class="persona-badge badge-elena">Clinical</span>
+        </button>
+
+        <!-- Maya Chen -->
+        <button class="persona-card" role="tab" aria-selected="false" data-persona="maya">
+          <img src="personas/maya-chen.png" alt="Maya Chen" class="persona-avatar" style="border-color: var(--maya);" loading="lazy">
+          <div class="persona-info">
+            <div class="persona-name">Maya Chen</div>
+            <div class="persona-specialty">Divorce · Life Transitions</div>
+          </div>
+          <span class="persona-badge badge-maya">Coach</span>
+        </button>
+
+        <!-- Dr. Kwame Okafor -->
+        <button class="persona-card" role="tab" aria-selected="false" data-persona="kwame">
+          <img src="personas/dr-kwame-okafor.png" alt="Dr. Kwame Okafor" class="persona-avatar" style="border-color: var(--kwame);" loading="lazy">
+          <div class="persona-info">
+            <div class="persona-name">Dr. Kwame Okafor</div>
+            <div class="persona-specialty">Trauma · PTSD Specialist</div>
+          </div>
+          <span class="persona-badge badge-kwame">Clinical</span>
+        </button>
+
+        <!-- Samir Patel -->
+        <button class="persona-card" role="tab" aria-selected="false" data-persona="samir">
+          <img src="personas/samir-patel.png" alt="Samir Patel" class="persona-avatar" style="border-color: var(--samir);" loading="lazy">
+          <div class="persona-info">
+            <div class="persona-name">Samir Patel</div>
+            <div class="persona-specialty">Mindfulness · ACT Guide</div>
+          </div>
+          <span class="persona-badge badge-samir">Certified</span>
+        </button>
+
+        <!-- Dr. Ayanna Brooks -->
+        <button class="persona-card" role="tab" aria-selected="false" data-persona="ayanna">
+          <img src="personas/dr-ayanna-brooks.png" alt="Dr. Ayanna Brooks" class="persona-avatar" style="border-color: var(--ayanna);" loading="lazy">
+          <div class="persona-info">
+            <div class="persona-name">Dr. Ayanna Brooks</div>
+            <div class="persona-specialty">Motivation · Habit Change</div>
+          </div>
+          <span class="persona-badge badge-ayanna">Clinical</span>
+        </button>
+
+        <!-- Dr. Fatima Al-Rashid -->
+        <button class="persona-card" role="tab" aria-selected="false" data-persona="fatima">
+          <img src="personas/dr-fatima-alrashid.png" alt="Dr. Fatima Al-Rashid" class="persona-avatar" style="border-color: var(--fatima);" loading="lazy">
+          <div class="persona-info">
+            <div class="persona-name">Dr. Fatima Al-Rashid</div>
+            <div class="persona-specialty">Grief · Relationships</div>
+          </div>
+          <span class="persona-badge badge-fatima">Clinical</span>
+        </button>
+
+        <!-- Jordan Reyes -->
+        <button class="persona-card" role="tab" aria-selected="false" data-persona="jordan">
+          <img src="personas/jordan-reyes.png" alt="Jordan Reyes" class="persona-avatar" style="border-color: var(--jordan);" loading="lazy">
+          <div class="persona-info">
+            <div class="persona-name">Jordan Reyes</div>
+            <div class="persona-specialty">LGBTQ+ · Peer Support</div>
+          </div>
+          <span class="persona-badge badge-jordan">Peer</span>
+        </button>
+
+      </div>
+
+      <div class="sidebar-status">
+        <span class="status-dot" aria-hidden="true"></span>
+        Secure &amp; confidential
+      </div>
+    </aside>
+
+    <!-- ===== MAIN CHAT VIEW ===== -->
+    <main class="main-content" role="main">
+
+      <!-- Chat Header -->
+      <header class="chat-header">
+        <img src="personas/dr-elena-vasquez.png" alt="Dr. Elena Vasquez" class="chat-header-avatar" style="border-color: var(--elena);">
+        <div class="chat-header-info">
+          <div class="chat-header-name">Dr. Elena Vasquez</div>
+          <div class="chat-header-status" aria-live="polite">
+            <span class="status-dot" style="width:6px;height:6px;margin-right:4px;vertical-align:middle;" aria-hidden="true"></span>
+            Online · CBT Specialist
+          </div>
+        </div>
+        <div class="chat-header-actions">
+          <button class="header-btn" aria-label="Session info" title="Session info">ⓘ</button>
+          <button class="header-btn" aria-label="Switch therapist" title="Switch therapist">⇄</button>
+        </div>
+      </header>
+
+      <!-- Messages Area -->
+      <div class="messages-area" role="log" aria-label="Chat messages" aria-live="polite">
+
+        <!-- Crisis banner example -->
+        <div class="crisis-banner" role="alert">
+          <span class="crisis-banner-icon" aria-hidden="true">⚠</span>
+          <div>
+            <strong>Need immediate support?</strong> If you're in crisis or thinking about harming yourself, please reach out now.
+            <a href="#">988 Suicide &amp; Crisis Lifeline</a> · Call or text 988
+          </div>
+        </div>
+
+        <!-- System message -->
+        <div class="system-message" role="status">
+          Session started · Phase 1: Check-in &amp; Grounding
+        </div>
+
+        <!-- Persona message -->
+        <div class="message persona" role="article" aria-label="Dr. Elena Vasquez says">
+          <img src="personas/dr-elena-vasquez.png" alt="Dr. Elena Vasquez" class="message-avatar" loading="lazy">
+          <div>
+            <div class="message-bubble" style="border-color: var(--elena);">
+              Welcome back. Take a moment to settle in — wherever you are, just notice your feet on the floor, your breath moving through you. There's no rush.
+              <span class="message-time">10:02 AM</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- User message -->
+        <div class="message user" role="article" aria-label="You say">
+          <div>
+            <div class="message-bubble">
+              Hi Dr. Vasquez. I've been feeling really anxious about a presentation I have tomorrow. My mind keeps racing with worst-case scenarios.
+              <span class="message-time">10:03 AM</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Persona message -->
+        <div class="message persona" role="article" aria-label="Dr. Elena Vasquez says">
+          <img src="personas/dr-elena-vasquez.png" alt="Dr. Elena Vasquez" class="message-avatar" loading="lazy">
+          <div>
+            <div class="message-bubble" style="border-color: var(--elena);">
+              I hear you. That racing-mind feeling before a big moment is very common — and very manageable. Let me reflect back what I'm hearing: you have an important presentation, and your mind is generating a lot of "what if" scenarios. Does that sound right?
+              <span class="message-time">10:03 AM</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- User message -->
+        <div class="message user" role="article" aria-label="You say">
+          <div>
+            <div class="message-bubble">
+              Yes, that's exactly it. I keep thinking "what if I freeze up?" or "what if they can tell I'm nervous?"
+              <span class="message-time">10:04 AM</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Persona message with signature phrase -->
+        <div class="message persona" role="article" aria-label="Dr. Elena Vasquez says">
+          <img src="personas/dr-elena-vasquez.png" alt="Dr. Elena Vasquez" class="message-avatar" loading="lazy">
+          <div>
+            <div class="message-bubble" style="border-color: var(--elena);">
+              Let's look at one of those thoughts together. When you think "they can tell I'm nervous" — what's the evidence for that thought, and what's the evidence against it?
+              <span class="message-time">10:05 AM</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Typing indicator -->
+        <div class="typing-indicator" aria-label="Dr. Elena Vasquez is typing">
+          <img src="personas/dr-elena-vasquez.png" alt="" class="typing-avatar" aria-hidden="true">
+          <div class="typing-dots" aria-hidden="true">
+            <span class="typing-dot"></span>
+            <span class="typing-dot"></span>
+            <span class="typing-dot"></span>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Input Area -->
+      <div class="input-area">
+        <div class="input-container">
+          <textarea class="input-textarea" rows="1" placeholder="Share what's on your mind..." aria-label="Type your message"></textarea>
+          <div class="input-actions">
+            <button class="input-btn" aria-label="Attach file">📎</button>
+            <button class="input-btn send" aria-label="Send message">→</button>
+          </div>
+        </div>
+      </div>
+
+    </main>
+  </div>
+
+  <!-- ===== JAVASCRIPT FOR INTERACTIVITY ===== -->
+  <script>
+    // Persona data for dynamic switching
+    const personas = {
+      elena: {
+        name: 'Dr. Elena Vasquez',
+        specialty: 'CBT Specialist',
+        badge: 'Clinical',
+        color: 'var(--elena)',
+        img: 'personas/dr-elena-vasquez.png',
+        tagClass: 'badge-elena'
+      },
+      maya: {
+        name: 'Maya Chen',
+        specialty: 'Divorce & Life Transitions Coach',
+        badge: 'Coach',
+        color: 'var(--maya)',
+        img: 'personas/maya-chen.png',
+        tagClass: 'badge-maya'
+      },
+      kwame: {
+        name: 'Dr. Kwame Okafor',
+        specialty: 'Trauma-Informed Psychologist',
+        badge: 'Clinical',
+        color: 'var(--kwame)',
+        img: 'personas/dr-kwame-okafor.png',
+        tagClass: 'badge-kwame'
+      },
+      samir: {
+        name: 'Samir Patel',
+        specialty: 'Mindfulness & ACT Guide',
+        badge: 'Certified',
+        color: 'var(--samir)',
+        img: 'personas/samir-patel.png',
+        tagClass: 'badge-samir'
+      },
+      ayanna: {
+        name: 'Dr. Ayanna Brooks',
+        specialty: 'Motivation & Habit Specialist',
+        badge: 'Clinical',
+        color: 'var(--ayanna)',
+        img: 'personas/dr-ayanna-brooks.png',
+        tagClass: 'badge-ayanna'
+      },
+      fatima: {
+        name: 'Dr. Fatima Al-Rashid',
+        specialty: 'Grief & Interpersonal Specialist',
+        badge: 'Clinical',
+        color: 'var(--fatima)',
+        img: 'personas/dr-fatima-alrashid.png',
+        tagClass: 'badge-fatima'
+      },
+      jordan: {
+        name: 'Jordan Reyes',
+        specialty: 'LGBTQ+ Affirming Counselor',
+        badge: 'Peer',
+        color: 'var(--jordan)',
+        img: 'personas/jordan-reyes.png',
+        tagClass: 'badge-jordan'
+      }
+    };
+
+    // Get DOM elements
+    const sidebarBtns = document.querySelectorAll('.persona-card[role="tab"]');
+    const headerAvatar = document.querySelector('.chat-header-avatar');
+    const headerName = document.querySelector('.chat-header-name');
+    const headerStatus = document.querySelector('.chat-header-status');
+    const personaBubbles = document.querySelectorAll('.message.persona .message-avatar');
+    const personaBubbleBorders = document.querySelectorAll('.message.persona .message-bubble');
+
+    // Simple persona switching
+    sidebarBtns.forEach(btn => {
+      btn.addEventListener('click', function() {
+        const personaId = this.dataset.persona;
+        const p = personas[personaId];
+        if (!p) return;
+
+        // Update sidebar active state
+        sidebarBtns.forEach(b => {
+          b.classList.remove('active');
+          b.setAttribute('aria-selected', 'false');
+        });
+        this.classList.add('active');
+        this.setAttribute('aria-selected', 'true');
+
+        // Update header
+        headerAvatar.src = p.img;
+        headerAvatar.alt = p.name;
+        headerAvatar.style.borderColor = p.color;
+        headerName.textContent = p.name;
+        headerStatus.innerHTML = `<span class="status-dot" style="width:6px;height:6px;margin-right:4px;vertical-align:middle;" aria-hidden="true"></span> Online · ${p.specialty}`;
+
+        // Update persona chat bubbles
+        personaBubbles.forEach(img => {
+          img.src = p.img;
+          img.alt = p.name;
+        });
+        personaBubbleBorders.forEach(bubble => {
+          bubble.style.borderColor = p.color;
+        });
+
+        // Update typing indicator avatar
+        const typingAvatar = document.querySelector('.typing-avatar');
+        if (typingAvatar) typingAvatar.src = p.img;
+      });
+    });
+
+    // Auto-resize textarea
+    const textarea = document.querySelector('.input-textarea');
+    if (textarea) {
+      textarea.addEventListener('input', function() {
+        this.style.height = 'auto';
+        this.style.height = Math.min(this.scrollHeight, 120) + 'px';
+      });
+
+      // Send on Enter (without shift)
+      textarea.addEventListener('keydown', function(e) {
+        if (e.key === 'Enter' && !e.shiftKey) {
+          e.preventDefault();
+          if (this.value.trim()) {
+            // In a real app, this would send the message
+            // For the mockup, just clear
+            this.value = '';
+            this.style.height = 'auto';
+          }
+        }
+      });
+    }
+  </script>
+
+</body>
+</html>
