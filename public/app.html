@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Setu — Your Guides</title>
+  <meta name="description" content="Talk with a Setu guide — unbiased, judgment-free counselling support.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Merriweather:wght@400;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/styles.css">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M2 20 Q4 4 12 4 Q20 4 22 20' fill='none' stroke='%23E8B4A8' stroke-width='2.5' stroke-linecap='round'/%3E%3C/svg%3E">
+</head>
+<body>
+
+<div class="app-layout">
+
+  <!-- Sidebar -->
+  <aside class="sidebar" id="sidebar" aria-label="Guide selection">
+    <div class="sidebar-header">
+      <a class="logo" href="/">
+        <span class="logo-icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path d="M2 20 Q4 4 12 4 Q20 4 22 20" />
+            <line x1="4" y1="20" x2="4" y2="16" />
+            <line x1="20" y1="20" x2="20" y2="16" />
+            <line x1="8" y1="13" x2="16" y2="13" stroke-width="1.5" stroke-dasharray="2 2" />
+          </svg>
+        </span>
+        <span class="logo-text-wrapper">
+          <span class="logo-text">Setu</span>
+          <span class="logo-tagline">Bridge to Better</span>
+        </span>
+      </a>
+      <button class="header-btn" id="sidebarClose" aria-label="Close menu">✕</button>
+    </div>
+
+    <span class="sidebar-label">Your guides</span>
+    <nav class="persona-list" id="personaList" aria-label="Select a guide"></nav>
+
+    <div class="sidebar-footer">
+      <button class="linklike" id="btnFindGuide">Not sure who to talk to? Take the quiz</button>
+      <button class="linklike" id="btnAbout">About Setu &amp; safety</button>
+      <button class="linklike" id="btnClearData">Clear all my conversations</button>
+      <div class="sidebar-status">
+        <span class="status-dot" aria-hidden="true"></span>
+        Conversations stay in your browser
+      </div>
+    </div>
+  </aside>
+
+  <!-- Main -->
+  <main class="main-content" role="main">
+
+    <div class="mobile-bar">
+      <button class="header-btn" id="btnMenu" aria-label="Open menu">☰ Guides</button>
+      <a class="logo" href="/" style="gap:6px">
+        <span class="logo-text" style="font-size:16px">Setu</span>
+      </a>
+      <span style="width:70px"></span>
+    </div>
+
+    <!-- Screen: quiz -->
+    <section class="screen" id="screenQuiz">
+      <div class="screen-inner">
+        <div class="screen-header">
+          <h1>Let's find the right guide for you</h1>
+          <p>Three quick questions. Honest answers help — but there are no wrong ones.</p>
+        </div>
+        <div class="quiz-card" id="quizCard"></div>
+        <p class="quiz-skip">
+          <button class="btn btn-ghost" id="btnSkipQuiz">Skip — let me browse all guides</button>
+        </p>
+      </div>
+    </section>
+
+    <!-- Screen: guide selection -->
+    <section class="screen hidden" id="screenSelect">
+      <div class="screen-inner">
+        <div class="screen-header">
+          <h1 id="selectTitle">Choose your guide</h1>
+          <p id="selectSub">You can switch guides at any time — each keeps their own conversation with you.</p>
+        </div>
+        <div class="persona-grid" id="selectGrid"></div>
+      </div>
+    </section>
+
+    <!-- Screen: chat -->
+    <section class="hidden" id="screenChat" style="display:flex;flex-direction:column;flex:1;min-height:0">
+      <header class="chat-header" id="chatHeader">
+        <img src="" alt="" class="chat-header-avatar" id="chatAvatar">
+        <div class="chat-header-info">
+          <div class="chat-header-name" id="chatName"></div>
+          <div class="chat-header-status" id="chatStatus" aria-live="polite"></div>
+        </div>
+        <div class="chat-header-actions">
+          <button class="header-btn" id="btnNewSession" title="Start a fresh conversation">↺ New</button>
+          <button class="header-btn" id="btnSwitch" title="Switch guide">⇄</button>
+        </div>
+      </header>
+
+      <div class="messages-area" id="messagesArea" role="log" aria-label="Chat messages" aria-live="polite">
+        <div class="messages-inner" id="messagesInner"></div>
+      </div>
+
+      <div class="input-area">
+        <div class="input-container">
+          <textarea class="input-textarea" id="inputBox" rows="1" placeholder="Share what's on your mind..." aria-label="Type your message"></textarea>
+          <button class="input-btn" id="btnSend" aria-label="Send message">→</button>
+        </div>
+        <p class="input-hint">Setu guides are AI, not licensed clinicians. In a crisis, call Tele-MANAS 14416 (India), 988 (US), or local emergency services.</p>
+      </div>
+    </section>
+  </main>
+</div>
+
+<!-- Welcome / disclaimer modal -->
+<div class="modal-backdrop hidden" id="disclaimerModal" role="dialog" aria-modal="true" aria-labelledby="disclaimerTitle">
+  <div class="modal">
+    <h2 id="disclaimerTitle">Welcome to Setu 🌉</h2>
+    <p>Before we begin, the honest stuff:</p>
+    <ul>
+      <li>Your guides are <strong>AI personas</strong> — thoughtfully designed, but not real, licensed clinicians.</li>
+      <li>Setu is a space to think out loud and feel heard. It's <strong>not therapy</strong> and not a replacement for professional care.</li>
+      <li>Your conversations are stored <strong>only in this browser</strong> — not on our servers. Clearing your browser data erases them.</li>
+      <li>If you're ever in crisis, please reach real humans: <strong>Tele-MANAS 14416</strong> (India), <strong>988</strong> (US), or <a href="https://findahelpline.com" target="_blank" rel="noopener">findahelpline.com</a>.</li>
+    </ul>
+    <div class="modal-actions">
+      <a class="btn btn-ghost" href="/">Take me back</a>
+      <button class="btn btn-primary" id="btnAcceptDisclaimer">I understand — let's talk</button>
+    </div>
+  </div>
+</div>
+
+<!-- Confirm clear-data modal -->
+<div class="modal-backdrop hidden" id="clearModal" role="dialog" aria-modal="true" aria-labelledby="clearTitle">
+  <div class="modal">
+    <h2 id="clearTitle">Clear all conversations?</h2>
+    <p>This permanently deletes every conversation with every guide from this browser. There's no undo.</p>
+    <div class="modal-actions">
+      <button class="btn btn-ghost" id="btnCancelClear">Keep them</button>
+      <button class="btn btn-crisis" id="btnConfirmClear">Yes, clear everything</button>
+    </div>
+  </div>
+</div>
+
+<script src="/js/app.js"></script>
+</body>
+</html>
