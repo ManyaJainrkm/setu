@@ -1,6 +1,5 @@
-// Landing page: render the persona showcase from the API.
+// Landing page: render the persona showcase from the shared static data.
 
-// Darker text shades per persona for readable tags (per style-guide badge colors).
 const TAG_TEXT = {
   elena: "#8B6A45", maya: "#3D7064", kwame: "#3D4560", samir: "#3D6A50",
   ayanna: "#A06050", fatima: "#5D4A60", jordan: "#9A7030",
@@ -9,8 +8,7 @@ const TAG_TEXT = {
 async function loadPersonas() {
   const grid = document.getElementById("personaGrid");
   try {
-    const res = await fetch("/api/personas");
-    const { personas } = await res.json();
+    const { personas } = await window.loadSetuData();
     grid.innerHTML = "";
     for (const p of personas) {
       const card = document.createElement("article");
@@ -30,13 +28,13 @@ async function loadPersonas() {
         </div>
         <p class="card-quote">“${p.quote}”</p>
         <p class="card-desc">${p.description}</p>
-        <a class="btn btn-primary card-btn" href="/app.html?guide=${p.id}">Connect →</a>
+        <a class="btn btn-primary card-btn" href="app.html?guide=${p.id}">Connect →</a>
       `;
       grid.appendChild(card);
     }
   } catch {
     grid.innerHTML = `<p style="grid-column:1/-1;text-align:center;color:var(--medium-stone)">
-      Couldn't load the guides right now — <a href="/app.html">head to the app</a> instead.</p>`;
+      Couldn't load the guides right now — <a href="app.html">open the app</a> instead.</p>`;
   }
 }
 

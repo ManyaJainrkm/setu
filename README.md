@@ -5,6 +5,10 @@ support. It connects you with seven specialized AI guides — each modeled with 
 persona, counselling methodology, and area of focus — so you can talk things through with
 someone who can't possibly have an ulterior motive.
 
+Setu is a **static site that runs on your own Anthropic API key.** Your messages go
+straight from your browser to Anthropic; there's no Setu server in the middle, and your
+conversations live only in your browser.
+
 > Setu's guides are AI personas, not licensed clinicians, and Setu is not a replacement
 > for professional therapy. Every conversation has crisis-support resources built in.
 
@@ -15,53 +19,71 @@ someone who can't possibly have an ulterior motive.
 - **Seven specialized guides** (CBT, trauma-informed care, ACT/mindfulness, behavioral
   activation, grief/IPT, life transitions, LGBTQ+ peer support), each with its own
   system prompt, voice, methodology, and referral boundaries
-- **Real-time streaming chat** powered by the Claude API (Claude Opus 4.8)
+- **Real-time streaming chat** with Claude (Claude Opus 4.8), called directly from the browser
+- **Bring-your-own-key** — each visitor supplies their own Anthropic key, stored only in
+  their browser (localStorage). No accounts, no shared secret, no Setu backend
 - **Crisis detection** — flagged messages surface a crisis-resources banner, and every
   guide follows a crisis-first protocol in its system prompt
-- **Privacy by design** — conversations are stored only in your browser (localStorage);
-  the server is stateless and stores nothing
-- Dark mode, reduced-motion support, mobile-responsive layout per `design/style-guide.md`
+- Dark mode, reduced-motion support, mobile-responsive layout
 
-## Quick start
+## Live site (GitHub Pages)
 
+The site is deployed from the `public/` folder by the GitHub Actions workflow in
+`.github/workflows/pages.yml`. To turn it on:
+
+1. Push to `main` (the workflow runs automatically).
+2. In the repo: **Settings → Pages → Build and deployment → Source: GitHub Actions**.
+3. The site publishes at `https://<username>.github.io/setu/`.
+
+First visit prompts each user for their own Anthropic API key (create one at
+[console.anthropic.com](https://console.anthropic.com/settings/keys)).
+
+### Optional custom domain (e.g. `setu.js.org`)
+
+Add a `CNAME` file in `public/` containing your domain, set it under Settings → Pages →
+Custom domain, and point DNS at GitHub Pages. For a free `js.org` subdomain, open a PR at
+[github.com/js-org/js.org](https://github.com/js-org/js.org).
+
+## Run locally
+
+Two ways:
+
+**Static (matches production):** serve the `public/` folder with any static server, e.g.
+```bash
+npx serve public
+```
+then open the printed URL and add your Anthropic key when prompted.
+
+**With the optional Node server** (proxies chat so a single key stays server-side — handy
+for local development):
 ```bash
 npm install
-cp .env.example .env      # add your ANTHROPIC_API_KEY
+cp .env.example .env      # add ANTHROPIC_API_KEY
 npm start                 # http://localhost:3000
 ```
-
-Without an API key the site still runs; chat shows a setup message instead of replies.
 
 ## Project structure
 
 ```
-server/
-  index.js       Express server: static hosting + streaming /api/chat (SSE)
-  personas.js    Persona definitions, system prompts, quiz topic mapping
-  crisis.js      Keyword-based crisis detection (first-pass signal for the UI banner)
-public/
-  index.html     Landing page
-  app.html       The app: quiz → guide selection → chat
-  js/, css/      Vanilla JS + design-system CSS (no build step)
-  img/personas/  Guide avatars
-design/          Original design artifacts (style guide, personas spec, chat mockup)
-personas.md      Full persona & session-structure specification
+public/                 The static site (this is what GitHub Pages serves)
+  index.html            Landing page
+  app.html              The app: quiz → guide selection → chat
+  data/personas.json    Single source of truth for persona data (guides + prompts)
+  js/                    setu-data.js (loader), landing.js, app.js (chat + BYOK)
+  css/styles.css         Design system
+  img/personas/          Guide avatars
+.github/workflows/pages.yml   GitHub Pages deploy
+server/                 Optional local Node server (reads public/data/personas.json)
+design/                 Original design artifacts (style guide, personas spec, mockup)
+personas.md             Full persona & session-structure specification
 ```
 
-## API
+## Privacy model
 
-- `GET /api/personas` — public persona metadata + quiz topic map
-- `POST /api/chat` — `{ personaId, messages: [{role, content}] }` → Server-Sent Events
-  stream of `{type: "crisis" | "text" | "error" | "done"}` events
-- `GET /api/health` — `{ ok, configured }`
-
-## Configuration
-
-| Variable            | Default            | Purpose                        |
-| ------------------- | ------------------ | ------------------------------ |
-| `ANTHROPIC_API_KEY` | —                  | Required for chat              |
-| `PORT`              | `3000`             | Server port                    |
-| `SETU_MODEL`        | `claude-opus-4-8`  | Claude model used for guides   |
+- No Setu server is involved in the static deployment. The browser calls the Anthropic
+  API directly using the `anthropic-dangerous-direct-browser-access` header.
+- The API key and all conversations are stored only in the visitor's browser
+  (localStorage). "Clear all my conversations" and "Remove saved key" wipe them.
 
 ## Design credits
 

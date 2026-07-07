@@ -8,7 +8,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Merriweather:wght@400;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="/css/styles.css">
+  <link rel="stylesheet" href="css/styles.css">
   <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M2 20 Q4 4 12 4 Q20 4 22 20' fill='none' stroke='%23E8B4A8' stroke-width='2.5' stroke-linecap='round'/%3E%3C/svg%3E">
 </head>
 <body>
@@ -18,7 +18,7 @@
   <!-- Sidebar -->
   <aside class="sidebar" id="sidebar" aria-label="Guide selection">
     <div class="sidebar-header">
-      <a class="logo" href="/">
+      <a class="logo" href="index.html">
         <span class="logo-icon" aria-hidden="true">
           <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
             <path d="M2 20 Q4 4 12 4 Q20 4 22 20" />
@@ -39,6 +39,8 @@
     <nav class="persona-list" id="personaList" aria-label="Select a guide"></nav>
 
     <div class="sidebar-footer">
+      <button class="linklike" id="btnApiKey">Set / change your API key</button>
+      <div class="sidebar-status" id="keyStatus" style="color:var(--medium-stone)">API key: not set</div>
       <button class="linklike" id="btnFindGuide">Not sure who to talk to? Take the quiz</button>
       <button class="linklike" id="btnAbout">About Setu &amp; safety</button>
       <button class="linklike" id="btnClearData">Clear all my conversations</button>
@@ -54,7 +56,7 @@
 
     <div class="mobile-bar">
       <button class="header-btn" id="btnMenu" aria-label="Open menu">☰ Guides</button>
-      <a class="logo" href="/" style="gap:6px">
+      <a class="logo" href="index.html" style="gap:6px">
         <span class="logo-text" style="font-size:16px">Setu</span>
       </a>
       <span style="width:70px"></span>
@@ -122,11 +124,12 @@
     <ul>
       <li>Your guides are <strong>AI personas</strong> — thoughtfully designed, but not real, licensed clinicians.</li>
       <li>Setu is a space to think out loud and feel heard. It's <strong>not therapy</strong> and not a replacement for professional care.</li>
-      <li>Your conversations are stored <strong>only in this browser</strong> — not on our servers. Clearing your browser data erases them.</li>
+      <li>Setu runs on <strong>your own Anthropic API key</strong>, stored only in this browser. Your messages go straight from your browser to Anthropic — never through our servers.</li>
+      <li>Your conversations are stored <strong>only in this browser</strong>. Clearing your browser data erases them.</li>
       <li>If you're ever in crisis, please reach real humans: <strong>Tele-MANAS 14416</strong> (India), <strong>988</strong> (US), or <a href="https://findahelpline.com" target="_blank" rel="noopener">findahelpline.com</a>.</li>
     </ul>
     <div class="modal-actions">
-      <a class="btn btn-ghost" href="/">Take me back</a>
+      <a class="btn btn-ghost" href="index.html">Take me back</a>
       <button class="btn btn-primary" id="btnAcceptDisclaimer">I understand — let's talk</button>
     </div>
   </div>
@@ -144,6 +147,26 @@
   </div>
 </div>
 
-<script src="/js/app.js"></script>
+<!-- API key modal -->
+<div class="modal-backdrop hidden" id="keyModal" role="dialog" aria-modal="true" aria-labelledby="keyTitle">
+  <div class="modal">
+    <h2 id="keyTitle">Your Anthropic API key</h2>
+    <p>Setu is free and runs on <strong>your</strong> Anthropic key — that's what keeps it unbiased and lets us host it with no accounts and no data on our side.</p>
+    <ul>
+      <li>Your key is stored <strong>only in this browser</strong> (localStorage) and is sent straight to Anthropic, never to us.</li>
+      <li>Messages use your Anthropic credit, typically a fraction of a cent each.</li>
+      <li>Don't have one? Create a key at <a href="https://console.anthropic.com/settings/keys" target="_blank" rel="noopener">console.anthropic.com</a> (you'll need to add a little credit).</li>
+    </ul>
+    <input type="password" id="keyInput" class="input-textarea" style="width:100%;border:1px solid var(--light-stone);border-radius:var(--radius-md);padding:12px;background:var(--warm-white)" placeholder="sk-ant-..." autocomplete="off" spellcheck="false" aria-label="Anthropic API key">
+    <div class="modal-actions">
+      <button class="btn btn-ghost" id="btnClearKey" type="button">Remove saved key</button>
+      <button class="btn btn-ghost" id="btnCloseKey" type="button">Cancel</button>
+      <button class="btn btn-primary" id="btnSaveKey" type="button">Save key</button>
+    </div>
+  </div>
+</div>
+
+<script src="js/setu-data.js"></script>
+<script src="js/app.js"></script>
 </body>
 </html>

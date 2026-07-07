@@ -1,4 +1,6 @@
-// Setu app — quiz, guide selection, and chat.
+// Setu app — static, bring-your-own-key.
+// Persona data is loaded from data/personas.json; chat calls the Anthropic API
+// directly from the browser using a key the visitor stores locally.
 
 const TAG_TEXT = {
   elena: "#8B6A45", maya: "#3D7064", kwame: "#3D4560", samir: "#3D6A50",
@@ -9,14 +11,42 @@ const STORE = {
   accepted: "setu.accepted",
   convos: "setu.convos",
   quizDone: "setu.quizDone",
+  apiKey: "setu.apiKey",
 };
+
+const ANTHROPIC_URL = "https://api.anthropic.com/v1/messages";
+
+// First-pass crisis detection (mirrors the server's crisis.js) — surfaces the
+// crisis-resources banner. Each guide also follows a crisis protocol in-prompt.
+const CRISIS_PATTERNS = [
+  /\bsuicid\w*/i,
+  /\bkill(?:ing)?\s+myself\b/i,
+  /\bend(?:ing)?\s+(?:my|it\s+all|my\s+own)\s*(?:life)?\b/i,
+  /\btake\s+my\s+(?:own\s+)?life\b/i,
+  /\b(?:don'?t|do\s+not)\s+want\s+to\s+(?:live|be\s+alive|exist|wake\s+up)\b/i,
+  /\bbetter\s+off\s+(?:dead|without\s+me)\b/i,
+  /\bself[\s-]?harm\w*/i,
+  /\bhurt(?:ing)?\s+myself\b/i,
+  /\bcut(?:ting)?\s+myself\b/i,
+  /\boverdos\w+/i,
+  /\bno\s+reason\s+to\s+(?:live|go\s+on)\b/i,
+  /\bwant\s+to\s+d(?:ie|isappear)\b/i,
+  /\bkill(?:ing)?\s+(?:him|her|them|someone)\b/i,
+  /\bhurt(?:ing)?\s+(?:someone|somebody|others)\b/i,
+];
+function detectCrisis(text) {
+  return text ? CRISIS_PATTERNS.some((re) => re.test(text)) : false;
+}
 
 const state = {
   personas: [],
   topicMap: {},
+  sharedGuidelines: "",
+  model: "claude-opus-4-8",
   activeId: null,
   sending: false,
   recommended: [],
+  pendingSend: false,
 };
 
 const $ = (id) => document.getElementById(id);
@@ -35,6 +65,9 @@ function saveConvo(personaId, messages) {
 function getConvo(personaId) {
   return loadConvos()[personaId] || [];
 }
+function getKey() { return localStorage.getItem(STORE.apiKey) || ""; }
+function setKey(k) { localStorage.setItem(STORE.apiKey, k.trim()); }
+function clearKey() { localStorage.removeItem(STORE.apiKey); }
 
 /* ---------------- screens ---------------- */
 
@@ -83,6 +116,35 @@ function renderSidebar() {
     btn.addEventListener("click", () => openChat(p.id));
     list.appendChild(btn);
   }
+  updateKeyStatus();
+}
+
+function updateKeyStatus() {
+  const el = $("keyStatus");
+  if (!el) return;
+  el.textContent = getKey() ? "API key: saved ✓" : "API key: not set — add one to chat";
+}
+
+/* ---------------- API key modal ---------------- */
+
+function openKeyModal(pending = false) {
+  state.pendingSend = pending;
+  $("keyInput").value = getKey();
+  $("keyModal").classList.remove("hidden");
+  setTimeout(() => $("keyInput").focus(), 50);
+}
+function closeKeyModal() {
+  $("keyModal").classList.add("hidden");
+  state.pendingSend = false;
+}
+function saveKeyFromModal() {
+  const k = $("keyInput").value.trim();
+  if (!k) return;
+  setKey(k);
+  updateKeyStatus();
+  const wasPending = state.pendingSend;
+  closeKeyModal();
+  if (wasPending && state.activeId) sendMessage();
 }
 
 /* ---------------- quiz ---------------- */
@@ -323,8 +385,30 @@ function renderMessages(convo) {
   sys.textContent = `This is a private conversation with ${p.shortName} — an AI guide, saved only in your browser.`;
   inner.appendChild(sys);
 
+  if (!getKey()) inner.appendChild(keyPromptEl());
+
   for (const msg of convo) inner.appendChild(messageEl(msg, p));
   scrollToBottom();
+}
+
+function keyPromptEl() {
+  const el = document.createElement("div");
+  el.className = "crisis-banner";
+  el.style.borderLeftColor = "var(--butter-dark)";
+  el.style.background = "var(--butter-light)";
+  el.style.color = "var(--dark-stone)";
+  el.innerHTML = `
+    <span class="crisis-banner-icon" aria-hidden="true">🔑</span>
+    <div>
+      <strong>Add your Anthropic API key to start chatting.</strong>
+      Setu runs on your own key, stored only in this browser — nothing is sent to us.
+      <a href="#" id="inlineKeyLink">Add your key →</a>
+    </div>`;
+  el.querySelector("#inlineKeyLink").addEventListener("click", (e) => {
+    e.preventDefault();
+    openKeyModal(false);
+  });
+  return el;
 }
 
 function scrollToBottom() {
@@ -334,9 +418,9 @@ function scrollToBottom() {
 
 function showCrisisBanner() {
   const inner = $("messagesInner");
-  if (inner.querySelector(".crisis-banner")) return;
+  if (inner.querySelector(".crisis-banner.crisis-real")) return;
   const banner = document.createElement("div");
-  banner.className = "crisis-banner pinned";
+  banner.className = "crisis-banner crisis-real pinned";
   banner.setAttribute("role", "alert");
   banner.innerHTML = `
     <span class="crisis-banner-icon" aria-hidden="true">⚠</span>
@@ -366,10 +450,16 @@ function typingIndicator(p) {
   return el;
 }
 
+function buildSystemPrompt(p) {
+  return `${state.sharedGuidelines}\n\n---\n\n${p.system}`;
+}
+
 async function sendMessage() {
   const box = $("inputBox");
   const text = box.value.trim();
   if (!text || state.sending || !state.activeId) return;
+
+  if (!getKey()) { openKeyModal(true); return; }
 
   const p = persona(state.activeId);
   const convo = getConvo(state.activeId);
@@ -383,15 +473,15 @@ async function sendMessage() {
 
   const inner = $("messagesInner");
   inner.appendChild(messageEl(convo[convo.length - 1], p));
+  if (detectCrisis(text)) showCrisisBanner();
   const typing = typingIndicator(p);
   inner.appendChild(typing);
   scrollToBottom();
 
   // The API requires the first message to be from the user, so strip the
   // locally-inserted greeting (and any leading assistant turns).
-  const apiMessages = convo
-    .slice(convo.findIndex((m) => m.role === "user"))
-    .map(({ role, content }) => ({ role, content }));
+  const firstUser = convo.findIndex((m) => m.role === "user");
+  const apiMessages = convo.slice(firstUser).map(({ role, content }) => ({ role, content }));
 
   let streamBubble = null;
   let streamText = "";
@@ -399,72 +489,99 @@ async function sendMessage() {
 
   const startStreamBubble = () => {
     typing.remove();
-    const msgEl = messageEl({ role: "assistant", content: "" }, p);
-    streamBubble = msgEl.querySelector(".message-bubble");
-    inner.appendChild(msgEl);
+    const el = messageEl({ role: "assistant", content: "" }, p);
+    streamBubble = el.querySelector(".message-bubble");
+    inner.appendChild(el);
+  };
+  const fail = (message) => {
+    gotError = true;
+    typing.remove();
+    inner.appendChild(messageEl({ role: "assistant", content: message, error: true, ts: Date.now() }, p));
+    scrollToBottom();
   };
 
   try {
-    const res = await fetch("/api/chat", {
+    const res = await fetch(ANTHROPIC_URL, {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ personaId: state.activeId, messages: apiMessages }),
+      headers: {
+        "content-type": "application/json",
+        "x-api-key": getKey(),
+        "anthropic-version": "2023-06-01",
+        "anthropic-dangerous-direct-browser-access": "true",
+      },
+      body: JSON.stringify({
+        model: state.model,
+        max_tokens: 2048,
+        system: buildSystemPrompt(p),
+        messages: apiMessages,
+        stream: true,
+      }),
     });
-    if (!res.ok || !res.body) throw new Error(`HTTP ${res.status}`);
 
-    const reader = res.body.getReader();
-    const decoder = new TextDecoder();
-    let buffer = "";
+    if (!res.ok) {
+      let detail = "";
+      try { detail = (await res.json())?.error?.message || ""; } catch { /* ignore */ }
+      if (res.status === 401) {
+        clearKey();
+        updateKeyStatus();
+        fail("Your API key was rejected. It may be wrong or revoked — add a valid key and try again.");
+        openKeyModal(false);
+      } else if (res.status === 429) {
+        fail("Your Anthropic account is rate-limited or out of credit right now. Wait a moment, or check your usage, then try again.");
+      } else if (res.status === 400 && /credit balance/i.test(detail)) {
+        fail("Your Anthropic account has no credit balance. Add credit at console.anthropic.com, then try again.");
+      } else {
+        fail(`Something went wrong reaching Claude${detail ? ` — ${detail}` : ""}. Please try again.`);
+      }
+    } else if (res.body) {
+      const reader = res.body.getReader();
+      const decoder = new TextDecoder();
+      let buffer = "";
+      let refused = false;
 
-    while (true) {
-      const { done, value } = await reader.read();
-      if (done) break;
-      buffer += decoder.decode(value, { stream: true });
-
-      const parts = buffer.split("\n\n");
-      buffer = parts.pop();
-      for (const part of parts) {
-        const line = part.trim();
-        if (!line.startsWith("data:")) continue;
-        let event;
-        try { event = JSON.parse(line.slice(5)); } catch { continue; }
-
-        if (event.type === "crisis") {
-          showCrisisBanner();
-        } else if (event.type === "text") {
-          if (!streamBubble) startStreamBubble();
-          streamText += event.text;
-          streamBubble.textContent = streamText;
-          scrollToBottom();
-        } else if (event.type === "error") {
-          gotError = true;
-          typing.remove();
-          inner.appendChild(messageEl({ role: "assistant", content: event.message, error: true, ts: Date.now() }, p));
-          scrollToBottom();
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
+        buffer += decoder.decode(value, { stream: true });
+        const parts = buffer.split("\n\n");
+        buffer = parts.pop();
+        for (const part of parts) {
+          for (const line of part.split("\n")) {
+            const t = line.trim();
+            if (!t.startsWith("data:")) continue;
+            let ev;
+            try { ev = JSON.parse(t.slice(5)); } catch { continue; }
+            if (ev.type === "content_block_delta" && ev.delta?.type === "text_delta") {
+              if (!streamBubble) startStreamBubble();
+              streamText += ev.delta.text;
+              streamBubble.textContent = streamText;
+              scrollToBottom();
+            } else if (ev.type === "message_delta" && ev.delta?.stop_reason === "refusal") {
+              refused = true;
+            } else if (ev.type === "error") {
+              fail(`Claude returned an error${ev.error?.message ? ` — ${ev.error.message}` : ""}.`);
+            }
+          }
         }
+      }
+      if (refused && !streamText) {
+        streamText =
+          "I'm not able to continue with that particular topic, but I'm still here with you. Is there something else on your mind we could sit with together?";
+        startStreamBubble();
+        streamBubble.textContent = streamText;
       }
     }
   } catch {
-    gotError = true;
-    typing.remove();
-    inner.appendChild(messageEl({
-      role: "assistant", error: true, ts: Date.now(),
-      content: "I couldn't reach the server just now. Check your connection and try again — your message is saved.",
-    }, p));
-    scrollToBottom();
+    fail("I couldn't reach Claude just now — check your internet connection and try again. Your message is saved.");
   }
 
   typing.remove();
   if (streamText) {
     convo.push({ role: "assistant", content: streamText, ts: Date.now() });
     saveConvo(state.activeId, convo);
-    // Re-render so the streamed bubble gains its timestamp.
-    renderMessages(convo);
+    renderMessages(convo); // re-render so the streamed bubble gains its timestamp
   } else if (!gotError) {
-    inner.appendChild(messageEl({
-      role: "assistant", error: true, ts: Date.now(),
-      content: "Hmm, no response came through. Please try sending that again.",
-    }, p));
+    fail("Hmm, no response came through. Please try sending that again.");
   }
 
   state.sending = false;
@@ -520,6 +637,19 @@ function wireEvents() {
     $("disclaimerModal").classList.add("hidden");
   });
 
+  $("btnApiKey").addEventListener("click", () => openKeyModal(false));
+  $("btnSaveKey").addEventListener("click", saveKeyFromModal);
+  $("btnCloseKey").addEventListener("click", closeKeyModal);
+  $("btnClearKey").addEventListener("click", () => {
+    clearKey();
+    $("keyInput").value = "";
+    updateKeyStatus();
+    if (state.activeId) renderMessages(getConvo(state.activeId));
+  });
+  $("keyInput").addEventListener("keydown", (e) => {
+    if (e.key === "Enter") { e.preventDefault(); saveKeyFromModal(); }
+  });
+
   $("btnClearData").addEventListener("click", () => $("clearModal").classList.remove("hidden"));
   $("btnCancelClear").addEventListener("click", () => $("clearModal").classList.add("hidden"));
   $("btnConfirmClear").addEventListener("click", () => {
@@ -535,16 +665,18 @@ function wireEvents() {
 
 async function init() {
   wireEvents();
+  let data;
   try {
-    const res = await fetch("/api/personas");
-    const data = await res.json();
-    state.personas = data.personas;
-    state.topicMap = data.topicMap;
+    data = await window.loadSetuData();
   } catch {
     $("quizCard").innerHTML =
-      `<p style="color:var(--crisis-text)">Couldn't reach the Setu server. Is it running? Try <code>npm start</code> and reload.</p>`;
+      `<p style="color:var(--crisis-text)">Couldn't load Setu's guide data. If you're opening the file directly, use a web server (or the live site) instead.</p>`;
     return;
   }
+  state.personas = data.personas;
+  state.topicMap = data.topicMap;
+  state.sharedGuidelines = data.sharedGuidelines;
+  state.model = data.model || state.model;
 
   renderSidebar();
 

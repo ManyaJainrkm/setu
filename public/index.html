@@ -8,14 +8,14 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Merriweather:wght@400;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="/css/styles.css">
+  <link rel="stylesheet" href="css/styles.css">
   <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M2 20 Q4 4 12 4 Q20 4 22 20' fill='none' stroke='%23E8B4A8' stroke-width='2.5' stroke-linecap='round'/%3E%3C/svg%3E">
 </head>
 <body>
 
   <header class="site-header">
     <div class="site-header-inner">
-      <a class="logo" href="/">
+      <a class="logo" href="index.html">
         <span class="logo-icon" aria-hidden="true">
           <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
             <path d="M2 20 Q4 4 12 4 Q20 4 22 20" />
@@ -35,7 +35,7 @@
         <a href="#how">How it works</a>
         <a href="#honesty">What Setu is</a>
       </nav>
-      <a class="btn btn-primary" href="/app.html">Start a conversation</a>
+      <a class="btn btn-primary" href="app.html">Start a conversation</a>
     </div>
   </header>
 
@@ -49,10 +49,10 @@
         no judgment about your life, and nothing to sell you.
       </p>
       <div class="hero-actions">
-        <a class="btn btn-primary" href="/app.html">Find your guide →</a>
+        <a class="btn btn-primary" href="app.html">Find your guide →</a>
         <a class="btn btn-ghost" href="#guides">Meet the guides</a>
       </div>
-      <p class="hero-note">Free to try · No account needed · Your conversations stay on your device</p>
+      <p class="hero-note">Free &amp; open · Runs on your own Anthropic key · Your conversations stay on your device</p>
     </section>
 
     <div class="bridge-divider" aria-hidden="true">
@@ -136,6 +136,7 @@
           <li><strong>Setu is not therapy</strong> and not a replacement for professional mental health or medical care. It's a place to think out loud, feel heard, and find a next step.</li>
           <li><strong>Setu will never diagnose you</strong>, advise on medication, or push you toward any decision, product, or belief.</li>
           <li><strong>If you're in crisis</strong>, Setu will always point you to real human help, immediately.</li>
+          <li><strong>Your privacy is structural, not a promise:</strong> Setu is a static site that runs on your own Anthropic API key. Your messages go straight from your browser to Anthropic, and your conversations live only in your browser — there's no Setu server in the middle to store anything.</li>
         </ul>
         <p>That's the deal. No fine print.</p>
       </div>
@@ -151,10 +152,11 @@
         elsewhere: <a href="https://findahelpline.com" target="_blank" rel="noopener">findahelpline.com</a> or your local emergency services.
       </div>
       <p>Setu. Connecting you to care.</p>
-      <p>Built as an open concept prototype · <a href="/app.html">Start a conversation</a></p>
+      <p>Built as an open concept prototype · <a href="app.html">Start a conversation</a></p>
     </div>
   </footer>
 
-  <script src="/js/landing.js"></script>
+  <script src="js/setu-data.js"></script>
+  <script src="js/landing.js"></script>
 </body>
 </html>
