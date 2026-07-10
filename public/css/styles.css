@@ -6,39 +6,39 @@
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
 :root {
-  /* Brand colors — pastel & creamy palette */
-  --blush: #E8B4A8;
-  --blush-dark: #C47A6A;
-  --blush-light: #FDF0EC;
-  --butter: #F0D99E;
-  --butter-dark: #D4B060;
-  --butter-light: #FDF6E0;
-  --mint: #BDDAC4;
-  --mint-dark: #8DB89A;
-  --mint-light: #F0F8F2;
-  --cream: #FFF8F0;
-  --warm-white: #FFFAF5;
+  /* Brand colors — bright pastel palette (#FDFBD4 #DCD0FF #F6B2B2 #FFD1DC) */
+  --blush: #F6B2B2;        /* soft coral-pink (primary accent) */
+  --blush-dark: #B45C77;   /* berry — interactive text & hover */
+  --blush-light: #FFE7EC;  /* lightest pink tint */
+  --butter: #FDFBD4;       /* pale yellow */
+  --butter-dark: #E7E08C;  /* deeper yellow (hover) */
+  --butter-light: #FEFDEB;
+  --mint: #DCD0FF;         /* lavender */
+  --mint-dark: #B9A6EE;    /* deeper lavender */
+  --mint-light: #F3EFFF;
+  --cream: #FFF5F7;        /* page background — lightest pink */
+  --warm-white: #FFFBFB;
   --card-bg: #FFFFFF;
-  --light-stone: #E2DAD2;
-  --medium-stone: #9C928A;
-  --dark-stone: #2D2A27;
-  --slate: #4A4A4A;
-  --user-bubble: #E2DAD2;
+  --light-stone: #F0DCE6;  /* soft pink-lavender borders */
+  --medium-stone: #7C6A8B; /* mauve secondary text */
+  --dark-stone: #3A2C4A;   /* deep plum ink (headings) */
+  --slate: #4C3D5E;        /* plum body text */
+  --user-bubble: #DCD0FF;  /* lavender user bubbles */
 
   /* Persona accents */
-  --elena: #C4956A;
-  --maya: #5A9E8F;
-  --kwame: #5B6782;
-  --samir: #6DAF80;
-  --ayanna: #D4897B;
-  --fatima: #8B6F8E;
-  --jordan: #E8B040;
+  --elena: #E0A575;
+  --maya: #62BDA9;
+  --kwame: #9B93D6;
+  --samir: #86CF9A;
+  --ayanna: #F0A08F;
+  --fatima: #B58BB9;
+  --jordan: #F1C25A;
 
   /* Functional */
-  --crisis-bg: #FFF0ED;
-  --crisis-border: #C47A6A;
-  --crisis-text: #6B3A32;
-  --success: #8DB89A;
+  --crisis-bg: #FFE6EA;
+  --crisis-border: #E58AA0;
+  --crisis-text: #8A2F49;
+  --success: #8FD6AE;      /* pastel green — online / secure only */
 
   --font-heading: 'Merriweather', Georgia, 'Times New Roman', serif;
   --font-body: 'Inter', 'Segoe UI', 'Helvetica Neue', sans-serif;
@@ -95,10 +95,11 @@ a { color: var(--blush-dark); }
 /* ===== Logo ===== */
 .logo { display: flex; align-items: center; gap: var(--sm); text-decoration: none; }
 .logo-icon {
-  width: 40px; height: 40px; background: var(--blush); border-radius: var(--radius-sm);
+  width: 56px; height: 40px; background: #FFECF0; border-radius: var(--radius-sm);
   display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+  padding: 5px 7px;
 }
-.logo-icon svg { width: 26px; height: 26px; fill: none; stroke: #fff; stroke-width: 2.5; stroke-linecap: round; }
+.logo-icon svg { width: 100%; height: 100%; }
 .logo-text-wrapper { display: flex; flex-direction: column; line-height: 1.2; }
 .logo-text { font-family: var(--font-heading); font-size: 20px; font-weight: 700; color: var(--dark-stone); letter-spacing: 0.02em; }
 .logo-tagline { font-size: 10px; color: var(--medium-stone); letter-spacing: 0.06em; text-transform: uppercase; }
@@ -160,7 +161,7 @@ a { color: var(--blush-dark); }
 }
 .pillar:nth-child(2) { border-top-color: var(--butter-dark); }
 .pillar:nth-child(3) { border-top-color: var(--mint-dark); }
-.pillar:nth-child(4) { border-top-color: var(--kwame); }
+.pillar:nth-child(4) { border-top-color: var(--blush-dark); }
 .pillar-icon { font-size: 26px; margin-bottom: var(--sm); }
 .pillar h3 { font-size: 17px; color: var(--dark-stone); margin-bottom: var(--xs); }
 .pillar p { font-size: 14px; color: var(--medium-stone); }
@@ -485,31 +486,7 @@ a { color: var(--blush-dark); }
   .site-nav { display: none; }
 }
 
-/* ===== Dark mode ===== */
-@media (prefers-color-scheme: dark) {
-  :root {
-    --cream: #1A1816;
-    --warm-white: #1A1816;
-    --card-bg: #2A2724;
-    --slate: #E2DAD2;
-    --dark-stone: #FFFAF5;
-    --light-stone: #4A4744;
-    --medium-stone: #9C928A;
-    --blush-light: #33291F;
-    --butter-light: #332E1F;
-    --mint-light: #23291F;
-    --user-bubble: #3A3734;
-    --crisis-bg: #3A2622;
-    --crisis-text: #F0C4BA;
-    --shadow-sm: 0 1px 4px rgba(0,0,0,0.3);
-    --shadow-md: 0 2px 16px rgba(0,0,0,0.4);
-    --shadow-lg: 0 4px 24px rgba(0,0,0,0.5);
-  }
-  body { background: #1A1816; }
-  .site-header { background: color-mix(in srgb, #1A1816 88%, transparent); }
-  .btn-primary { color: #1A1816; }
-  .btn-primary:hover { color: #fff; }
-}
+/* Setu uses a single bright-pastel theme (no dark mode). */
 
 /* ===== Reduced motion ===== */
 @media (prefers-reduced-motion: reduce) {
