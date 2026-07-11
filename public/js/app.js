@@ -3,8 +3,8 @@
 // directly from the browser using a key the visitor stores locally.
 
 const TAG_TEXT = {
-  elena: "#8B6A45", maya: "#3D7064", kwame: "#3D4560", samir: "#3D6A50",
-  ayanna: "#A06050", fatima: "#5D4A60", jordan: "#9A7030",
+  elena: "#9A6033", maya: "#2F7A68", kwame: "#524B9E", samir: "#2E8452",
+  ayanna: "#B24E3C", fatima: "#7A4F80", jordan: "#93701F",
 };
 
 const STORE = {

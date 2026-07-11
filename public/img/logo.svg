@@ -1,0 +1,10 @@
+<svg viewBox="0 0 120 76" fill="none" stroke="#171717" stroke-linecap="round" stroke-linejoin="round" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Setu">
+  <!-- left speech bubble: a tangled thought -->
+  <path d="M14 10 H42 A12 12 0 0 1 54 22 V40 A12 12 0 0 1 42 52 H28 L18 62 V52 H14 A12 12 0 0 1 2 40 V22 A12 12 0 0 1 14 10 Z" stroke-width="4"/>
+  <path d="M20 34 C12 26 24 18 30 25 C36 32 20 38 25 28 C30 18 40 26 34 33 C28 40 18 30 27 24 C33 20 38 26 33 30" stroke-width="3"/>
+  <!-- right speech bubble: the thought, untangled -->
+  <path d="M78 10 H106 A12 12 0 0 1 118 22 V40 A12 12 0 0 1 106 52 H92 V62 L82 52 H78 A12 12 0 0 1 66 40 V22 A12 12 0 0 1 78 10 Z" stroke-width="4"/>
+  <circle cx="92" cy="31" r="10" stroke-width="3.5"/>
+  <!-- the thread connecting them -->
+  <path d="M22 61 C 40 75 62 75 80 61" stroke-width="3"/>
+</svg>
